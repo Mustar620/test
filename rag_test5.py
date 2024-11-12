@@ -38,41 +38,40 @@ def main():
 
     if user_input := st.chat_input("메시지를 입력해 주세요"):
         add_history("user", user_input)
-        st.chat_message("user").write(f"{user_input}")
-        with st.chat_message("assistant"):
+        st.chat_message("user").write(user_input)  # 사용자 메시지 표시
 
-            prompt_template = """
-            당신은 동서울대학교 컴퓨터소프트웨어과 안내 AI 입니다.
-            이전 대화를 바탕으로 질문에 맞는 답변을 50단어 보다 적게 해주세요.
-            Conversation History:
-            {history}
-            Question: {question}
-            Answer:
-            """
-            
-            prompt = ChatPromptTemplate.from_template(prompt_template)
-            conversation_history = get_conversation_history()
+        prompt_template = """
+        당신은 동서울대학교 컴퓨터소프트웨어과 안내 AI 입니다.
+        이전 대화를 바탕으로 질문에 맞는 답변을 50단어 보다 적게 해주세요.
+        Conversation History:
+        {history}
+        Question: {question}
+        Answer:
+        """
+        
+        prompt = ChatPromptTemplate.from_template(prompt_template)
+        conversation_history = get_conversation_history()
 
-            # Remote model API URL
-            remote_model_url = "https://mite-devoted-leech.ngrok-free.app/llm/"
+        # Remote model API URL
+        remote_model_url = "https://mite-devoted-leech.ngrok-free.app/llm/"
 
-            # Prepare data for the POST request
-            data = {
-                "question": user_input,
-                "history": conversation_history,
-                "prompt": prompt.format(history=conversation_history, question=user_input)
-            }
+        # Prepare data for the POST request
+        data = {
+            "question": user_input,
+            "history": conversation_history,
+            "prompt": prompt.format(history=conversation_history, question=user_input)
+        }
 
-            # Send request to remote model
-            response = requests.post(remote_model_url, json=data)
-            
-            if response.status_code == 200:
-                answer = response.json().get("answer", "")
-            else:
-                answer = "원격 서버에서 응답을 가져오지 못했습니다."
+        # Send request to remote model
+        response = requests.post(remote_model_url, json=data)
+        
+        if response.status_code == 200:
+            answer = response.json().get("answer", "")
+        else:
+            answer = "원격 서버에서 응답을 가져오지 못했습니다."
 
-            st.chat_message("assistant").write(answer)
-            add_history("ai", answer)
+        st.chat_message("assistant").write(answer)  # AI 답변 표시
+        add_history("ai", answer)
 
 if __name__ == '__main__':
     main()
