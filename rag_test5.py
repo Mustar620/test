@@ -23,12 +23,15 @@ from langserve import RemoteRunnable
 def get_text():
     doc_list = []
     base_path = os.path.dirname(__file__)
-    loader = os.path.join(base_path, "data", "컴퓨터소프트웨어학과.pdf")
-    documents = loader.load_and_split()
+    pdf_path1 = os.path.join(base_path, "data", "컴퓨터소프트웨어학과.pdf")
+    pdf_path2 = os.path.join(base_path, "data", "indata_kor.pdf")
+    loader = PyPDFLoader(pdf_path1)
+    documents = loader.load()  # load_and_split 대신 load 사용
     doc_list.extend(documents)
-    loader = os.path.join(base_path, "data", "indata_kor.pdf")   
-    documents = loader.load_and_split()
+    loader = PyPDFLoader(pdf_path2)
+    documents = loader.load()  # load_and_split 대신 load 사용
     doc_list.extend(documents)
+    
     return doc_list
 
 def tiktoken_len(text):
