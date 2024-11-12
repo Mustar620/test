@@ -26,10 +26,10 @@ def get_text():
     pdf_path1 = os.path.join(base_path, "data", "컴퓨터소프트웨어학과.pdf")
     pdf_path2 = os.path.join(base_path, "data", "indata_kor.pdf")
     loader = PyPDFLoader(pdf_path1)
-    documents = loader.load()  # load_and_split 대신 load 사용
+    documents = loader.load()  
     doc_list.extend(documents)
     loader = PyPDFLoader(pdf_path2)
-    documents = loader.load()  # load_and_split 대신 load 사용
+    documents = loader.load()  
     doc_list.extend(documents)
     
     return doc_list
@@ -110,8 +110,8 @@ def main():
 
     RAG_PROMPT_TEMPLATE = """
     당신은 동서울대학교 컴퓨터소프트웨어과 안내 AI 입니다.
-    검색된 문맥을 사용하여 질문에 맞는 답변을 해줘
-    질문의 대답은 단순하게 해주고 단순하게 안될 떄만 50자내로 답변해줘
+    검색된 문맥을 사용하여 질문에 맞는 답변만 30단어 이내로
+    답변하세요.
     Conversation History:
     {history}
     Question: {question}
