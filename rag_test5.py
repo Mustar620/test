@@ -21,10 +21,10 @@ from langserve import RemoteRunnable
 
 def get_text():
     doc_list = []
-    loader = PyPDFLoader(".\\data\\컴퓨터소프트웨어학과.pdf")
+    loader = PyPDFLoader("data\\컴퓨터소프트웨어학과.pdf")
     documents = loader.load_and_split()
     doc_list.extend(documents)
-    loader = PyPDFLoader(".\\data\\indata_kor.pdf")
+    loader = PyPDFLoader("data\\indata_kor.pdf")
     documents = loader.load_and_split()
     doc_list.extend(documents)
     return doc_list
