@@ -1,5 +1,6 @@
 import streamlit as st
 import tiktoken
+import os
 from loguru import logger
 
 from langchain_core.messages import ChatMessage
