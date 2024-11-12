@@ -1,6 +1,6 @@
 import streamlit as st
+import requests
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RemoteRunnable
 from langchain_core.output_parsers import StrOutputParser
 
 def get_conversation_history():
@@ -41,9 +41,6 @@ def main():
         st.chat_message("user").write(f"{user_input}")
         with st.chat_message("assistant"):
 
-            llm = RemoteRunnable("https://mite-devoted-leech.ngrok-free.app/llm/")
-            chat_container = st.empty()
-
             prompt_template = """
             당신은 동서울대학교 컴퓨터소프트웨어과 안내 AI 입니다.
             이전 대화를 바탕으로 질문에 맞는 답변을 50단어 보다 적게 해주세요.
@@ -56,19 +53,26 @@ def main():
             prompt = ChatPromptTemplate.from_template(prompt_template)
             conversation_history = get_conversation_history()
 
-            chain = (
-                {"question": user_input, "history": conversation_history}
-                | prompt
-                | llm
-                | StrOutputParser()
-            )
+            # Remote model API URL
+            remote_model_url = "https://mite-devoted-leech.ngrok-free.app/llm/"
 
-            answer = chain.stream(user_input)
-            chunks = []
-            for chunk in answer:
-                chunks.append(chunk)
-            chat_container.markdown("".join(chunks))
-            add_history("ai", "".join(chunks))
+            # Prepare data for the POST request
+            data = {
+                "question": user_input,
+                "history": conversation_history,
+                "prompt": prompt.format(history=conversation_history, question=user_input)
+            }
+
+            # Send request to remote model
+            response = requests.post(remote_model_url, json=data)
+            
+            if response.status_code == 200:
+                answer = response.json().get("answer", "")
+            else:
+                answer = "원격 서버에서 응답을 가져오지 못했습니다."
+
+            st.chat_message("assistant").write(answer)
+            add_history("ai", answer)
 
 if __name__ == '__main__':
     main()
